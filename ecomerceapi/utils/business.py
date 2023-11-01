@@ -2,6 +2,7 @@ from tortoise.signals import post_save
 from typing import List,Optional,Type 
 from tortoise import BaseDBAsyncClient
 from models.models import User,Business,business_pydantic
+from utils.email import send_email
 
 
 @post_save(User)
@@ -17,4 +18,6 @@ async def create_business(
             business_name = instance.username, owner = instance
         )
         await business_pydantic.from_tortoise_orm(business_obj)
-  
+
+        #Send email 
+        await send_email([instance.email],instance)
